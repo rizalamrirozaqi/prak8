@@ -12,7 +12,7 @@ pipeline {
             steps {
                 // Git SCM: Clones the specified Git repository.
                 // Ensure the URL is correct and accessible by the Jenkins agent.
-                git 'https://github.com/namauser/node-app.git'
+                git 'https://github.com/rizalamrirozaqi/prak8.git'
             }
         }
 
