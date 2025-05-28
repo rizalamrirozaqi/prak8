@@ -12,7 +12,7 @@ pipeline {
             steps {
                 // Git SCM: Clones the specified Git repository.
                 // Ensure the URL is correct and accessible by the Jenkins agent.
-                git 'https://github.com/rizalamrirozaqi/prak8.git'
+                git url: 'https://github.com/rizalamrirozaqi/prak8.git', branch: 'main'
             }
         }
 
