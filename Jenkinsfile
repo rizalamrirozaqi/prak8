@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git url: 'https://github.com/cravengithub/node-app.git', url: 'main'
+                git url: 'https://github.com/cravengithub/node-app.git', branch: 'main'
             }
         }
 
