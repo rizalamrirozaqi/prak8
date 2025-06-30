@@ -6,6 +6,12 @@ app.get('/', (req, res) => {
   res.send('Halo dari Node.js App!');
 });
 
-app.listen(PORT, () => {
-  console.log(`Aplikasi berjalan di http://localhost:${PORT}`);
-});
+// ⬇️ Hanya jalankan server bila file dieksekusi langsung
+if (require.main === module) {
+  app.listen(PORT, () =>
+    console.log(`Aplikasi berjalan di http://localhost:${PORT}`)
+  );
+}
+
+// ⬇️ Export app supaya bisa di‑require oleh test
+module.exports = app;
