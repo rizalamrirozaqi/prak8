@@ -2,16 +2,16 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.get('/', (req, res) => {
-  res.send('Halo dari Node.js App!');
+app.get('/', (_req, res) => {
+  res.json({ message: 'Hello from Jenkins demo!' });
 });
 
-// ⬇️ Hanya jalankan server bila file dieksekusi langsung
+// ✅ Server hanya dijalankan kalau file dieksekusi langsung,
+//    sehingga saat di‑require oleh unit‑test tidak membuka port.
 if (require.main === module) {
   app.listen(PORT, () =>
-    console.log(`Aplikasi berjalan di http://localhost:${PORT}`)
+    console.log(`Server listening on http://localhost:${PORT}`)
   );
 }
 
-// ⬇️ Export app supaya bisa di‑require oleh test
-module.exports = app;
+module.exports = app;   // diekspor agar bisa di‑test
