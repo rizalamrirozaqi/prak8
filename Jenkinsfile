@@ -1,34 +1,46 @@
+/*
+ * Pipeline deklaratif yang:
+ * 1. Otomatis checkout repo (default Jenkins)
+ * 2. Pakai container Node 20‑alpine
+ * 3. Install dependensi → jalan‑kan unit test → (opsional) start app
+ */
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:20-alpine'   // ringan & terbaru
+            args '-p 3000:3000'      // ekspose PORT kalau mau tes manual
+        }
+    }
+
+    environment {
+        PORT = '3000'
+        NODE_ENV = 'test'
+    }
 
     stages {
-        stage('Clone Repository') {
+
+        stage('Install Dependencies') {
             steps {
-                git url: 'https://github.com/cravengithub/node-app.git', branch: 'main'
+                sh 'npm ci'          // cepat & reproducible
             }
         }
 
-        stage('Build') {
+        stage('Unit Test') {
             steps {
-                sh 'npm install'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh 'npm test'   // asumsi sudah ada unit test
+                sh 'npm test'
             }
             post {
-                success { echo 'Tes berhasil!' }
-                failure { echo 'Tes gagal!' }
+                success { echo '✓ Semua tes lolos' }
+                failure { echo '✗ Tes gagal' }
             }
         }
 
-        stage('Deploy') {
+        stage('Run (only on main)') {
+            when { branch 'main' }   // jalankan hanya di branch utama
             steps {
-                echo 'Menjalankan aplikasi…'
-                // jalankan di background; nohup mencegah proses mati saat stage selesai
-                sh 'nohup node app.js &'
+                echo "Menjalankan aplikasi pada port ${PORT}…"
+                // proses tetap hidup selama pipeline; untuk demo saja
+                sh 'node app.js &'
             }
         }
     }
