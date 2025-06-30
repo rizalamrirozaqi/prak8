@@ -1,15 +1,8 @@
-/*
- * Pipeline deklaratif yang:
- * 1. Otomatis checkout repo (default Jenkins)
- * 2. Pakai container Node 20‑alpine
- * 3. Install dependensi → jalan‑kan unit test → (opsional) start app
- */
 pipeline {
-    agent {
-        docker {
-            image 'node:20-alpine'   // ringan & terbaru
-            args '-p 3000:3000'      // ekspose PORT kalau mau tes manual
-        }
+    agent any
+
+    tools {
+        nodejs 'Node20'   // Sesuaikan dengan nama tool Node.js yang kamu daftarkan di Jenkins
     }
 
     environment {
@@ -21,7 +14,7 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm ci'          // cepat & reproducible
+                sh 'npm ci'          // lebih cepat & konsisten daripada npm install
             }
         }
 
@@ -36,11 +29,12 @@ pipeline {
         }
 
         stage('Run (only on main)') {
-            when { branch 'main' }   // jalankan hanya di branch utama
+            when {
+                branch 'main'
+            }
             steps {
                 echo "Menjalankan aplikasi pada port ${PORT}…"
-                // proses tetap hidup selama pipeline; untuk demo saja
-                sh 'node app.js &'
+                sh 'nohup node app.js > output.log 2>&1 &'
             }
         }
     }
